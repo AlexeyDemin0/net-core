@@ -28,6 +28,7 @@ struct RequestData
 {
     Methods method;
     std::string path;
+    std::map<std::string, std::string> urlParams;
     std::map<std::string, std::string> header;
     std::string body;
 };
@@ -73,6 +74,7 @@ private:
     void RequestHandler(uintptr_t client_socket);
     void ReadBuffer(uintptr_t client_socket, std::stringstream& ss);
     void ParseBuffer(std::stringstream& ss, RequestData& requestData);
+    void ParseUrl(const std::string& url, RequestData& requestData);
     void BuildResponse(std::stringstream& ss, const ResponseData& responseData);
 
     HTTPHandler FindHandler(const RequestData& requestData);

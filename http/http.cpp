@@ -137,7 +137,7 @@ void HTTP::ParseBuffer(std::stringstream& ss, RequestData& requestData)
     requestData.method = GetMethodFromString(line);
 
     std::getline(ss, line, ' ');
-    requestData.path = line;
+    ParseUrl(line, requestData);
 
     std::getline(ss, line);
 
@@ -167,6 +167,34 @@ void HTTP::ParseBuffer(std::stringstream& ss, RequestData& requestData)
         bodyStream << line << '\n';
     }
     requestData.body = bodyStream.str();
+}
+
+void HTTP::ParseUrl(const std::string& url, RequestData& requestData)
+{
+    size_t questionPos = url.find('?');
+    if (questionPos != std::string::npos)
+    {
+        requestData.path = url.substr(0, questionPos);
+        std::string params = url.substr(questionPos + 1);
+
+        std::stringstream ss(params);
+        std::string keyValue;
+
+        while (std::getline(ss, keyValue, '&'))
+        {
+            size_t equalPos = keyValue.find('=');
+            if (equalPos != std::string::npos)
+            {
+                std::string key = keyValue.substr(0, equalPos);
+                std::string value = keyValue.substr(equalPos + 1);
+                requestData.urlParams[key] = value;
+            }
+        }
+    }
+    else
+    {
+        requestData.path = url;
+    }
 }
 
 void HTTP::BuildResponse(std::stringstream& ss, const ResponseData& responseData)
