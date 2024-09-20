@@ -204,7 +204,7 @@ void HTTP::BuildResponse(std::stringstream& ss, const ResponseData& responseData
     {
         ss << It->first << ": " << It->second << CRLF;
     }
-    ss << CRLF CRLF;
+    ss << CRLF;
     ss << responseData.bodyContent;
 }
 
