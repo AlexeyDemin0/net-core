@@ -3,6 +3,7 @@
 #include <thread>
 #include <iostream>
 #include <sstream>
+#include <thread>
 
 HTTP::HTTP(int port) :_port(port)
 {
@@ -111,6 +112,7 @@ void HTTP::RequestHandler(uintptr_t client_socket)
     BuildResponse(response, responseData);
 
     std::string data = response.str();
+    std::lock_guard<std::mutex> lock(_send_mutex);
     send(client_socket, data.c_str(), data.size(), 0);
 
     closesocket(client_socket);
@@ -121,6 +123,7 @@ void HTTP::ReadBuffer(uintptr_t client_socket, std::stringstream& ss)
     char buffer[RECV_BUFFER_SIZE];
     int received_bytes;
 
+    std::lock_guard<std::mutex> lock(_recv_mutex);
     do
     {
         received_bytes = recv(client_socket, buffer, RECV_BUFFER_SIZE, 0);

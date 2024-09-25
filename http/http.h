@@ -2,6 +2,7 @@
 #include <WinSock2.h>
 #include <string>
 #include <map>
+#include <mutex>
 #include <vector>
 
 #pragma comment(lib, "Ws2_32.lib")
@@ -56,6 +57,9 @@ private:
     SOCKET _listen_socket_descriptor;
     int _port;
     bool _acceptingEnable;
+
+    std::mutex _send_mutex;
+    std::mutex _recv_mutex;
 public:
     HTTP(int port);
 
